@@ -17,6 +17,12 @@ def admin(request):
 def chat(request):
     return render(request,'chat.html')
 
+def cliente(request):
+    return render(request,'cliente.html')
+def inicio(request):
+    return render(request,'inicio.html')
+
+
 def testeo(request):
     return render(request, 'testeo.html')
 

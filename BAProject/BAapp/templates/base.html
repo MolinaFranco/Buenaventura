@@ -45,32 +45,25 @@
       {% if user.is_authenticated %}
       <li><a>{{user.username|title}}</a></li>
       <li><a  href="{% url 'logout' %}" class="dropdown-item ">Cerrar Sesion</a></li>
-
+     
       {% else %}
       <li><a style="border-radius: 2em; color: #000000;" class="waves-effect waves-light btn modal-trigger green" href="#modal1" > Iniciar Sesion</a></li>
 
       {% endif %}
     </ul>
   </div>
-</nav>
+</nav>  
 
 
 <!--  sidenav -->
-<ul  style="background-color: rgba(25, 141, 45, 0.5);" class="sidenav" id="mobile-demo"  >
+<ul   class="sidenav" id="mobile-demo"  >
   {% if user.is_authenticated %}
   <li><div class="user-view">
     <div class="background">
-      <img src="{% static 'images/campos.jpg' %}">
+      
     </div>
-    <a ><img class="circle" src="{% static 'images/logo.png' %}"></a>
-    <div style=" background-color: rgba(25, 141, 45, 0.5); border-radius: 2em;" >
-      <div class="container">
-    <a href="#name"><span  class=" grey-text text-darken-1 name"> {{user.username|title}}</span></a>
-    <a href="#email"><span class="black-text   email">{{ user.get_full_name }}</span></a>
-    <a href="#email"><span class= "black-text email">{{ user.email }}</span></a>
-   
-    </div>
-  </div>
+    <a ><img class="circle" src="{% static 'images/isologo.ai' %}"></a>
+  
   <div class="divider"></div>
 </div></li>
   <li><div class="divider"></div></li>
@@ -81,16 +74,15 @@
   {% else %}
   <li><div class="user-view">
     <div class="background">
-      <img src="{% static 'images/campos.jpg' %}">
     </div>
-    <a ><img class="circle" src="{% static 'images/logo.png' %}"></a> 
+    <a ><img class="circle" src="{% static 'images/isologo.ai' %}"></a> 
 </div></li>
 
   <li><a class=' btn waves-effect waves-light green modal-trigger'  href="#modal1">Iniciar Sesion</a></li>
   <li><a class=' btn waves-effect waves-light green modal-trigger' >Quienes somos</a></li>
   <li><a class=' btn waves-effect waves-light green modal-trigger' >Nuestros Socios</a></li>
   <li><a class=' btn waves-effect waves-light green modal-trigger' >Nuestros Servicios</a></li>
-  </li>
+  
   {% endif %}
 </ul>
   {% block body %}
