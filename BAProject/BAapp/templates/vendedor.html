@@ -157,33 +157,6 @@ BuenaVentura Agronegocios
             
                     <tbody>
                       <tr>
-                        <td class=" center-align">27/03/2021</td>
-                        <td class=" center-align">
-                            <ol class="collection" start="1">
-                            <li class="collection-item" >Glifosato 20% </li>
-                            <li class="collection-item" >Atrazina 30% </li>
-                            <li class="collection-item" > Aceite soja 50%</li>
-                            <li class="collection-item" >Benomil 89%</li>
-                          </ol>
-                        </td>
-                        <td class=" center-align" > Tecnocampo - Martin suarez </td>
-                        <td>Matias Nuñez</td>
-                        <td> <a class="green  btn waves-effect waves-light  " href="#">Ir a la Negociacion</a></td>       
-                      </tr>
-                      <tr>
-                        <td class=" center-align">28/03/2021</td>
-                        <td class=" center-align">
-                            <ol start="1">
-                                <li>Glifosato 20% </li>
-                                <li>Atrazina 40% </li>
-                                <li>Aceite de soja 70%</li>
-                                <li>Bifentrin 50%</li>
-                                <li>Captan %62</li>
-                                <li>Diuron %71</li>
-                        </td>
-                        <td class=" center-align" > Speedagro - Daniel Smith</td>
-                        <td>Matias Nuñez</td>
-                        <td> <a class="green btn waves-effect waves-light  " href="#">Ir a la Negociacion</a></td>       
                       </tr>
                     </tbody>
                   </table>
@@ -203,8 +176,9 @@ BuenaVentura Agronegocios
                     </thead>
             
                     <tbody>
+                      {% for prepneg in presupuestos_negociando %}
                       <tr>
-                        <td class=" center-align">27/03/2021</td>
+                        <td class=" center-align">{{prepneg.timestamp|date:"M d, Y"}}</td>
                         <td class=" center-align">
                             <ol class="collection" start="1">
                             <li class="collection-item" >Glifosato 20% </li>
@@ -214,24 +188,10 @@ BuenaVentura Agronegocios
                           </ol>
                         </td>
                         <td class=" center-align" > Tecnocampo - Martin suarez </td>
-                        <td>Matias Nuñez</td>
+                        <td>{{prepneg.comprador.persona.user.first_name|title}} {{prepneg.comprador.persona.user.last_name|title}}</td>
                         <td> <a class="green  btn waves-effect waves-light  " href="#">Ir a la Negociacion</a></td>       
                       </tr>
-                      <tr>
-                        <td class=" center-align">28/03/2021</td>
-                        <td class=" center-align">
-                            <ol start="1">
-                                <li>Glifosato 20% </li>
-                                <li>Atrazina 40% </li>
-                                <li>Aceite de soja 70%</li>
-                                <li>Bifentrin 50%</li>
-                                <li>Captan %62</li>
-                                <li>Diuron %71</li>
-                        </td>
-                        <td class=" center-align" > Speedagro - Daniel Smith</td>
-                        <td>Matias Nuñez</td>
-                        <td> <a class="green  btn waves-effect waves-light  " href="#">Ir a la Negociacion</a></td>       
-                      </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
                 </div>
@@ -269,8 +229,9 @@ BuenaVentura Agronegocios
                     </thead>
             
                     <tbody>
+                      {% for negocioConf in negocios_cerrados_confirmados %}
                       <tr>
-                        <td class=" center-align">27/03/2021</td>
+                        <td class=" center-align">{{negocioConf.timestamp|date:"M d, Y"}}</td>
                         <td class=" center-align">
                             <ol class="collection" start="1">
                             <li class="collection-item" >Glifosato 20% </li>
@@ -280,24 +241,10 @@ BuenaVentura Agronegocios
                           </ol>
                         </td>
                         <td class=" center-align" > Tecnocampo - Martin suarez </td>
-                        <td>Matias Nuñez</td>
+                        <td>{{negocioConf.comprador.persona.user.first_name|title}} {{negocioConf.comprador.persona.user.last_name|title}}</td>
                         <td> <a class="green  btn waves-effect waves-light  " href="#">Ir a la Negociacion</a></td>       
                       </tr>
-                      <tr>
-                        <td class=" center-align">28/03/2021</td>
-                        <td class=" center-align">
-                            <ol start="1">
-                                <li>Glifosato 20% </li>
-                                <li>Atrazina 40% </li>
-                                <li>Aceite de soja 70%</li>
-                                <li>Bifentrin 50%</li>
-                                <li>Captan %62</li>
-                                <li>Diuron %71</li>
-                        </td>
-                        <td class=" center-align" > Speedagro - Daniel Smith</td>
-                        <td>Matias Nuñez</td>
-                        <td> <a class="green btn waves-effect waves-light  " href="#">Ir a la Negociacion</a></td>       
-                      </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
                   <a class=" btn-large red col s12 "><i class="material-icons right ">cancel</i> No Confirmados</a>
@@ -316,8 +263,9 @@ BuenaVentura Agronegocios
                     </thead>
             
                     <tbody>
+                      {% for negocioNoCerr in negocios_cerrados_no_confirmados %}
                       <tr>
-                        <td class=" center-align">27/03/2021</td>
+                        <td class=" center-align">{{negocioNoCerr.timestamp|date:"M d, Y"}}</td>
                         <td class=" center-align">
                             <ol class="collection" start="1">
                             <li class="collection-item" >Glifosato 20% </li>
@@ -327,24 +275,10 @@ BuenaVentura Agronegocios
                           </ol>
                         </td>
                         <td class=" center-align" > Tecnocampo - Martin suarez </td>
-                        <td>Matias Nuñez</td>
+                        <td>{{negocioNoCerr.comprador.persona.user.first_name|title}} {{negocioNoCerr.comprador.persona.user.last_name|title}}</td>
                         <td> <a class="green  btn waves-effect waves-light  " href="#">Ir a la Negociacion</a></td>       
                       </tr>
-                      <tr>
-                        <td class=" center-align">28/03/2021</td>
-                        <td class=" center-align">
-                            <ol start="1">
-                                <li>Glifosato 20% </li>
-                                <li>Atrazina 40% </li>
-                                <li>Aceite de soja 70%</li>
-                                <li>Bifentrin 50%</li>
-                                <li>Captan %62</li>
-                                <li>Diuron %71</li>
-                        </td>
-                        <td class=" center-align" > Speedagro - Daniel Smith</td>
-                        <td>Matias Nuñez</td>
-                        <td> <a class="green btn waves-effect waves-light  " href="#">Ir a la Negociacion</a></td>       
-                      </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
                 </div>
@@ -354,14 +288,8 @@ BuenaVentura Agronegocios
               </div>
             </div>
           </div>
-        
       </div>
-
-     
-      
-     
-      
-      
+  
       <div id="id6" class="section scrollspy">
         <div class="row">
             <div class="col s12 ">
@@ -371,9 +299,7 @@ BuenaVentura Agronegocios
                         <h4 class="center-align" > Semaforo Vencimientos </h4>
                     </div>
                   <br>
-                  
                   <div class="card  z-depth-3">
-                   
                   </div>
                   <div class="row">
                     <div class=" col s4">
@@ -419,14 +345,9 @@ BuenaVentura Agronegocios
                         </div>
                     </div> 
                 </div>
-                 
-                    
                   </div>
-                      
-                
                 <div class="card-action">
                   <a href="#">Ver Todas</a>
-                 
                 </div>
               </div>
             </div>
@@ -442,9 +363,7 @@ BuenaVentura Agronegocios
                         <h4 class="center-align" > Logistica </h4>
                     </div>
                   <br>
-                  
                   <div class="card  z-depth-3">
-                   
                   </div>
                   <table>
                     <thead>
@@ -457,7 +376,6 @@ BuenaVentura Agronegocios
                           <th></th>
                       </tr>
                     </thead>
-            
                     <tbody>
                       <tr class=" yellow">
                         <td>Carlos perez</td>
@@ -494,15 +412,9 @@ BuenaVentura Agronegocios
                       </tr>
                     </tbody>
                   </table>
-                        
-                 
-                    
                   </div>
-                      
-
                 <div class="card-action">
                   <a href="#">Ver Todas</a>
-                 
                 </div>
               </div>
             </div>

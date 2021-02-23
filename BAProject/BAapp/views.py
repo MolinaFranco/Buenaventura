@@ -37,7 +37,16 @@ def cliente(request):
     return render(request, 'cliente.html')
 
 def vendedor(request):
-    return render(request, 'vendedor.html')
+
+    #Negocios en proceso, no tiene definida la fecha de Cierre
+    negociosProceso = Negocio.objects.filter(fecha_cierre__isnull=True)
+
+    #Negocios Cerrados
+    #Negocios Confirmados son los que tienen definidos la fecha de Cierre y la de Entrega
+    negociosCerrConf = Negocio.objects.filter(fecha_cierre__isnull=False, fecha_entrega__isnull=False)
+    #Negocios No Confirmados son los que tienen definidos la fecha de Cierre pero no la de Entrega
+    negociosCerrRech = Negocio.objects.filter(fecha_cierre__isnull=False, fecha_entrega__isnull=True)
+    return render(request, 'vendedor.html', {'presupuestos_negociando':negociosProceso, 'negocios_cerrados_confirmados':negociosCerrConf,'negocios_cerrados_no_confirmados':negociosCerrRech})
 
 
 def carga_excel(request):
