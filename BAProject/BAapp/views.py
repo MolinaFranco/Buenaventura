@@ -37,13 +37,12 @@ def cliente(request):
     return render(request, 'cliente.html')
 
 def vendedor(request):
-    #Negocios en proceso, no tiene definida la fecha de Cierre
     negociosRecibido = list(Negocio.objects.filter(fecha_cierre__isnull=True).values_list('id', flat=True).distinct())
-    #lista_negocios_recibido = cargarListasNegociosAbiertos(negociosRecibido, True)
+    lista_negocios_recibido = cargarListasNegociosAbiertos(negociosRecibido, True)
     
     negociosProceso = list(Negocio.objects.filter(fecha_cierre__isnull=True).values_list('id', flat=True).distinct())
-    #lista_negocios_proceso = cargarListasNegociosAbiertos(negociosProceso, False)
-
+    lista_negocios_proceso = cargarListasNegociosAbiertos(negociosProceso, False)
+    
     negociosCerrConf = list(Negocio.objects.filter(fecha_cierre__isnull=False, fecha_entrega__isnull=False).values_list('id', flat=True).distinct())
     lista_negocios_confirmados = cargarListasNegociosCerrados(negociosCerrConf)
 
@@ -51,19 +50,19 @@ def vendedor(request):
     lista_negocios_no_confirmados = cargarListasNegociosCerrados(negociosCerrRech)    
     
     #return render(request, 'vendedor.html', {'presupuestos_negociando':list(lista_negocios_proceso), 'negocios_cerrados_confirmados':list(lista_negocios_confirmados),'negocios_cerrados_no_confirmados':list(lista_negocios_no_confirmados)})
-    return render(request, 'vendedor.html', {'negocios_cerrados_confirmados':list(lista_negocios_confirmados),'negocios_cerrados_no_confirmados':list(lista_negocios_no_confirmados)})
+    return render(request, 'vendedor.html', {'presupuestos_recibidos':lista_negocios_recibido,'presupuestos_negociando':list(lista_negocios_proceso),'negocios_cerrados_confirmados':list(lista_negocios_confirmados),'negocios_cerrados_no_confirmados':list(lista_negocios_no_confirmados)})
     
 def cargarListasNegociosCerrados(negocioFilter):
     lista_negocios = []
     for a in negocioFilter:
         negocio = Negocio.objects.get(id=a)
-        propuesta = Propuesta.objects.filter(negocio__id = negocio.id).order_by('-timestamp')[:1]            
-        items = ItemPropuesta.objects.filter(propuesta = propuesta).values_list('articulo__ingrediente', flat=True)
-        propuesta.timestamp = datetime.datetime.now()
-        
+        propuesta = list(Propuesta.objects.filter(negocio__id = negocio.id).order_by('-timestamp').values_list('id','timestamp')[:1])
+        id_prop = propuesta[0][0]
+        fecha_p = propuesta[0][1]
+        items = ItemPropuesta.objects.filter(propuesta__id = id_prop).values_list('articulo__ingrediente', flat=True)
         comprador = negocio.comprador.persona.user.last_name +" "+negocio.comprador.persona.user.first_name
         lista = {
-            'fecha':propuesta.timestamp,
+            'fecha':fecha_p,
             'items':list(items),
             'comprador': comprador,
             'empresa':negocio.comprador.empresa.razon_social
@@ -75,13 +74,15 @@ def cargarListasNegociosAbiertos(negocioFilter, tipo):
     lista_negocios = []
     for a in negocioFilter:
         negocio = Negocio.objects.get(id=a)
-        propuesta = Propuesta.objects.filter(negocio__id = negocio.id).order_by('-timestamp')[:1]            
-        if (((propuesta.envio_comprador) and (tipo))):
-            items = ItemPropuesta.objects.filter(propuesta = propuesta).values_list('articulo__ingrediente', flat=True)
-            propuesta.timestamp = datetime.datetime.now()
+        propuesta = list(Propuesta.objects.filter(negocio__id = negocio.id).order_by('-timestamp').values_list('id','timestamp','envio_comprador')[:1])
+        id_prop = propuesta[0][0]
+        fecha_p = propuesta[0][1]
+        envio = propuesta[0][2]
+        if (envio == tipo):
+            items = ItemPropuesta.objects.filter(propuesta__id = id_prop).values_list('articulo__ingrediente', flat=True)
             comprador = negocio.comprador.persona.user.last_name +" "+negocio.comprador.persona.user.first_name
             lista = {
-                'fecha':propuesta.timestamp,
+                'fecha':fecha_p,
                 'items':list(items),
                 'comprador': comprador,
                 'empresa':negocio.comprador.empresa.razon_social
