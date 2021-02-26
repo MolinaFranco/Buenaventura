@@ -37,17 +37,60 @@ def cliente(request):
     return render(request, 'cliente.html')
 
 def vendedor(request):
-
     #Negocios en proceso, no tiene definida la fecha de Cierre
-    negociosProceso = Negocio.objects.filter(fecha_cierre__isnull=True)
+    negociosRecibido = list(Negocio.objects.filter(fecha_cierre__isnull=True).values_list('id', flat=True).distinct())
+    #lista_negocios_recibido = cargarListasNegociosAbiertos(negociosRecibido, True)
+    
+    negociosProceso = list(Negocio.objects.filter(fecha_cierre__isnull=True).values_list('id', flat=True).distinct())
+    #lista_negocios_proceso = cargarListasNegociosAbiertos(negociosProceso, False)
 
-    #Negocios Cerrados
-    #Negocios Confirmados son los que tienen definidos la fecha de Cierre y la de Entrega
-    negociosCerrConf = Negocio.objects.filter(fecha_cierre__isnull=False, fecha_entrega__isnull=False)
-    #Negocios No Confirmados son los que tienen definidos la fecha de Cierre pero no la de Entrega
-    negociosCerrRech = Negocio.objects.filter(fecha_cierre__isnull=False, fecha_entrega__isnull=True)
-    return render(request, 'vendedor.html', {'presupuestos_negociando':negociosProceso, 'negocios_cerrados_confirmados':negociosCerrConf,'negocios_cerrados_no_confirmados':negociosCerrRech})
+    negociosCerrConf = list(Negocio.objects.filter(fecha_cierre__isnull=False, fecha_entrega__isnull=False).values_list('id', flat=True).distinct())
+    lista_negocios_confirmados = cargarListasNegociosCerrados(negociosCerrConf)
 
+    negociosCerrRech = list(Negocio.objects.filter(fecha_cierre__isnull=False, fecha_entrega__isnull=True).values_list('id', flat=True).distinct())
+    lista_negocios_no_confirmados = cargarListasNegociosCerrados(negociosCerrRech)    
+    
+    #return render(request, 'vendedor.html', {'presupuestos_negociando':list(lista_negocios_proceso), 'negocios_cerrados_confirmados':list(lista_negocios_confirmados),'negocios_cerrados_no_confirmados':list(lista_negocios_no_confirmados)})
+    return render(request, 'vendedor.html', {'negocios_cerrados_confirmados':list(lista_negocios_confirmados),'negocios_cerrados_no_confirmados':list(lista_negocios_no_confirmados)})
+    
+def cargarListasNegociosCerrados(negocioFilter):
+    lista_negocios = []
+    for a in negocioFilter:
+        negocio = Negocio.objects.get(id=a)
+        propuesta = Propuesta.objects.filter(negocio__id = negocio.id).order_by('-timestamp')[:1]            
+        items = ItemPropuesta.objects.filter(propuesta = propuesta).values_list('articulo__ingrediente', flat=True)
+        propuesta.timestamp = datetime.datetime.now()
+        
+        comprador = negocio.comprador.persona.user.last_name +" "+negocio.comprador.persona.user.first_name
+        lista = {
+            'fecha':propuesta.timestamp,
+            'items':list(items),
+            'comprador': comprador,
+            'empresa':negocio.comprador.empresa.razon_social
+        }
+        lista_negocios.append(lista)
+    return lista_negocios
+
+def cargarListasNegociosAbiertos(negocioFilter, tipo):
+    lista_negocios = []
+    for a in negocioFilter:
+        negocio = Negocio.objects.get(id=a)
+        propuesta = Propuesta.objects.filter(negocio__id = negocio.id).order_by('-timestamp')[:1]            
+        if (((propuesta.envio_comprador) and (tipo))):
+            items = ItemPropuesta.objects.filter(propuesta = propuesta).values_list('articulo__ingrediente', flat=True)
+            propuesta.timestamp = datetime.datetime.now()
+            comprador = negocio.comprador.persona.user.last_name +" "+negocio.comprador.persona.user.first_name
+            lista = {
+                'fecha':propuesta.timestamp,
+                'items':list(items),
+                'comprador': comprador,
+                'empresa':negocio.comprador.empresa.razon_social
+            }
+            lista_negocios.append(lista)
+        else:
+            pass
+    return lista_negocios
+    
 
 def carga_excel(request):
     return render(request, 'carga_excel.html')
