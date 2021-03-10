@@ -10,7 +10,6 @@ from django.forms import inlineformset_factory
 from django.core import serializers
 from django.db import transaction, models
 from django.utils.dateparse import parse_date
-
 from .forms import *
 from .models import *
 from .choices import DIVISA_CHOICES, TASA_CHOICES
@@ -22,7 +21,7 @@ from pprint import pprint as print
 from pprint import pprint as print
 
 def landing_page(request):
-	return render(request, 'Principal.html')
+    return render(request, 'Principal.html')
 
 def admin(request):
     return render(request,'admin.html')

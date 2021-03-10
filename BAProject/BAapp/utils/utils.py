@@ -16,48 +16,51 @@ def _read_header(ws):
         header[key] = i
     return header
 
-def sheet_reader(sheet):
-    wb = load_workbook(filename=sheet)
+def sheet_reader(request):
+    if (request.method == 'POST'):
+        sheet = request.FILES['myfile']
+        wb = load_workbook(filename=sheet)
 
-    emp_sheet = wb["empresas"]
-    emp_header = _read_header(emp_sheet)
+        emp_sheet = wb["empresas"]
+        emp_header = _read_header(emp_sheet)
 
-    with transaction.atomic():
-        for c in emp_sheet.iter_rows(2, values_only=True):
-            instance = Empresa()
-            if (c[emp_header["id"]]):
-                instance = Empresa.objects.get(id=c[emp_header["id"]])
-            if (not c[emp_header["razon_social"]]):
-                break
-            for v in emp_header.keys():
-                if (v=="retenciones"):
-                    if (c[emp_header[v]]):    
-                        rets = c[emp_header[v]].split("+")
-                        for ret in rets:
-                            obj = Retencion.objects.get(name=ret)
-                            instance.retenciones.add(obj)
-                    continue
-                setattr(instance, v, c[emp_header[v]])
-            instance.save()
+        with transaction.atomic():
+            for c in emp_sheet.iter_rows(2, values_only=True):
+                instance = Empresa()
+                if (c[emp_header["id"]]):
+                    instance = Empresa.objects.get(id=c[emp_header["id"]])
+                if (not c[emp_header["razon_social"]]):
+                    break
+                for v in emp_header.keys():
+                    if (v=="retenciones"):
+                        if (c[emp_header[v]]):    
+                            rets = c[emp_header[v]].split("+")
+                            for ret in rets:
+                                obj = Retencion.objects.get(name=ret)
+                                instance.retenciones.add(obj)
+                        continue
+                    setattr(instance, v, c[emp_header[v]])
+                instance.save()
 
-    art_sheet = wb["articulos"]
-    art_header = _read_header(art_sheet)
+        art_sheet = wb["articulos"]
+        art_header = _read_header(art_sheet)
 
-    with transaction.atomic():
-        for c in art_sheet.iter_rows(2, values_only=True):
-            instance = Articulo()
-            if (c[art_header["id"]]):
-                instance = Articulo.objects.get(id=c[art_header["id"]])
-            if (not c[art_header["marca"]]):
-                break
-            for v in art_header.keys():
-                if (v=="empresa"):
-                    instance.empresa = Empresa.objects.get(
-                        razon_social=c[art_header["empresa"]])
-                    continue
-                setattr(instance, v, c[art_header[v]])
-            instance.save()
-
+        with transaction.atomic():
+            for c in art_sheet.iter_rows(2, values_only=True):
+                instance = Articulo()
+                if (c[art_header["id"]]):
+                    instance = Articulo.objects.get(id=c[art_header["id"]])
+                if (not c[art_header["marca"]]):
+                    break
+                for v in art_header.keys():
+                    if (v=="empresa"):
+                        instance.empresa = Empresa.objects.get(
+                            razon_social=c[art_header["empresa"]])
+                        continue
+                    setattr(instance, v, c[art_header[v]])
+                instance.save()
+    return render(request, 'carga_excel.html')
+    
 def _get_actual_fields(model):
     fields = []
     for i in model._meta.get_fields():
@@ -65,7 +68,7 @@ def _get_actual_fields(model):
             fields.append(i.name)
     return fields
 
-def _write_header(sheet, fields):
+def _write_header(sheet):
     fill = PatternFill(
         fill_type="solid",
         start_color="9AC0CD",
