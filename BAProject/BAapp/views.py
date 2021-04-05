@@ -43,6 +43,22 @@ def testeo(request):
 def cliente(request):
     return render(request, 'cliente.html')
 
+def perfilProveedor(request):
+    negociosAbiertos = list(Negocio.objects.filter(fecha_cierre__isnull=True).values_list('id', flat=True).order_by('-timestamp').distinct()[:3])
+    
+    lnr = listasNA(negociosAbiertos, True)
+    lnp = listasNA(negociosAbiertos, False)
+    
+    #lnc = Lista Negocios Confirmados
+    negociosCerrConf = list(Negocio.objects.filter(fecha_cierre__isnull=False, aprobado=True).values_list('id', flat=True).order_by('-timestamp').distinct()[:3])
+    lnc = listaNC(negociosCerrConf)
+    
+    lista_vencidos,lista_semanas,lista_futuros = semaforoVencimiento(negociosCerrConf)
+    #lnnc = Linta de Negocios Rechazados
+    negociosCerrRech = list(Negocio.objects.filter(fecha_cierre__isnull=False, aprobado=False).values_list('id', flat=True).order_by('-timestamp').distinct()[:3])
+    lnnc = listaNC(negociosCerrRech)
+    return render(request, 'perfilProveedor.html', {'vencimiento_futuro':lista_futuros,'vencimiento_semanal':lista_semanas,'vencidos':lista_vencidos,'presupuestos_recibidos':list(lnr),'presupuestos_negociando':list(lnp),'negocios_cerrados_confirmados':list(lnc),'negocios_cerrados_no_confirmados':list(lnnc)})
+
 def vendedor(request):
     
     #Negocios en Procesos

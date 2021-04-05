@@ -16,6 +16,7 @@ urlpatterns = [
     path('chat/', chat, name="chat"),
     path('inicio/', inicio, name="inicio"),
     path('cliente/', cliente, name="Cliente"),
+    path('perfilProveedor/', perfilProveedor, name="perfilProveedor"),
     path('vendedor/', vendedor, name="vendedor"),
     path('carga_excel/', carga_excel.as_view(), name="carga_excel"),
     path('todos_negocios/', todos_negocios, name ="todos_negocios"),
